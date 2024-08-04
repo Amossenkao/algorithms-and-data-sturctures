@@ -81,4 +81,3 @@ list = LinkedList.new(4)
 list.append(34, 8, 45)
 
 list.display
-puts list.tail

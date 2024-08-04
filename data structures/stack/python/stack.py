@@ -8,7 +8,7 @@ class Stack:
     def push(self, *items):
         '''adds one or more items to the stack'''
         for item in items:
-            self.__items.update({self.__len: item})
+            self.__items[self.__len] = items
             self.__len += 1
         return self
 

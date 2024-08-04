@@ -1,7 +1,6 @@
 
 class Stack
   include Enumerable
-  attr_reader :items
   attr_reader :length
 
   def initialize(*items)
@@ -23,6 +22,15 @@ class Stack
     @items.delete(@length)
   end
 
+  def items
+    output = []
+
+    @items.each_value do |item|
+      output.push(item)
+    end
+    output
+  end
+
   def peek()
     @items[@length - 1]
   end
@@ -30,8 +38,8 @@ class Stack
   def empty?; @length == 0; end
 
   def clear
+    @items.clear
     @length = 0
-    @items = {}
     return self
   end
 
@@ -45,6 +53,3 @@ class Stack
     end
   end
 end
-
-my_stack = Stack.new(3,4)
-puts my_stack.methods

@@ -5,28 +5,24 @@ class LinkedList:
     def __init__(self, head=None) -> None:
         self.__len = 0
         self.__head = None
-        head != None and self.append(head)
+        self.__tail = None
+        if head is not None:
+            self.append(head)
 
     def append(self, *data):
         '''Adds one or more items at the end of the list.'''
         for item in data:
             if self.is_empty:
                 self.__head = Node(item)
-                self.__len += 1
-                continue
-
-            current = self.__head
-            while current.next:
-                current = current.next
-
-            current.next = Node(item)
+                self.__tail = self.__head
+            else:
+                self.__tail.next = Node(item)
+                self.__tail = self.__tail.next
             self.__len += 1
-
         return self
 
-# Add an item at the start of the list
     def prepend(self, *data):
-        '''Adds orn or more items at the start of the list'''
+        '''Adds one or more items at the start of the list'''
         for item in data:
             self.__head = Node(item, self.__head)
             self.__len += 1
@@ -61,6 +57,7 @@ class LinkedList:
 
         data = current.value
         previous.next = None
+        self.__tail = previous
         self.__len -= 1
         return data
 
@@ -92,6 +89,8 @@ class LinkedList:
 
         if index == 0:
             return self.prepend(data)
+        elif index == self.__len:
+            return self.append(data)
 
         current_index = 0
         current = self.__head
@@ -113,10 +112,12 @@ class LinkedList:
             return
 
         if index > self.len - 1:
-            index = self.len - 1 if not self.is_empty else 0
+            index = self.len - 1
 
         if index == 0:
             return self.delete_head()
+        elif index == self.__len - 1:
+            return self.delete_tail()
 
         current_index = 0
         previous = self.__head
@@ -159,8 +160,14 @@ class LinkedList:
         return False
 
     def reverse(self):
-        for i in range(self.len - 1):
-            self.insert_at(self.len - i - 1, self.delete_head())
+        prev = None
+        current = self.__head
+        while current:
+            next_node = current.next
+            current.next = prev
+            prev = current
+            current = next_node
+        self.__head = prev
         return self
 
     def count(self, item) -> int:
@@ -201,24 +208,46 @@ class LinkedList:
                 return False
         return True
 
+    def sort(self, reverse=False):
+        """Sorts the linked list in place. If `reverse` is True, the list is sorted in descending order. This function implements a `bubble sort`, which is ineffecient for large number of inputs"""
+
+        if self.__len < 2:
+            return self
+
+        sorted_nodes = 1
+        while sorted_nodes < self.__len:
+
+            current = self.__head
+            next_node = current.next
+            index = 0
+            while index < self.__len - sorted_nodes:
+                a, b = current.value, next_node.value
+
+                if (reverse and a < b) or (not reverse and a > b):
+                    current.value = b
+                    next_node.value = a
+
+                current = next_node
+                next_node = current.next
+                index += 1
+            sorted_nodes += 1
+        return self
+
     def clear(self):
         self.__head = None
+        self.__tail = None
         self.__len = 0
         return self
 
     @property
-    def head(self) -> Node | None:
+    def head(self):
         return self.__head.value if not self.is_empty else self.__head
 
     @property
-    def tail(self) -> Node | None:
+    def tail(self):
         if self.is_empty:
             return
-
-        current = self.__head
-        while current.next:
-            current = current.next
-        return current.value
+        return self.__tail
 
     @property
     def len(self) -> int:
@@ -229,13 +258,7 @@ class LinkedList:
         return self.__len == 0
 
     def __str__(self) -> str:
-        linked_list = ""
-        current = self.__head
-        while current:
-            linked_list += str(current.value) + " -> "
-            current = current.next
-
-        return f'{linked_list}{current}'
+        return " -> ".join(map(str, self)) + " -> None"
 
     def __getitem__(self, key):
         return self.get_at(key)

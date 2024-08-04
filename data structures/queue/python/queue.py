@@ -5,7 +5,6 @@ class Queue:
         self.__len = 0
         self.__head = 0
         self.__tail = 0
-        self.__index = 0
         self.enqueue(*items)
 
     def enqueue(self, *items):
@@ -48,7 +47,6 @@ class Queue:
     def clear(self):
         self.__items.clear()
         self.__len = 0
-        self.__index = 0
         self.__head = 0
         self.__tail = 0
         return self
@@ -62,15 +60,8 @@ class Queue:
         return self.__len
 
     def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.__index >= self.__len:
-            raise StopIteration
-        else:
-            item = list(self.__items.values())[self.__index]
-            self.__index += 1
-            return item
+        for key in self.__items:
+            yield self.__items[key]
 
     def __str__(self) -> str:
         return f'{list(self.__items.values())}'
